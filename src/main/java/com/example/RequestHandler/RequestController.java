@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +17,7 @@ class ServiceInstanceRestController {
 
     @Autowired private LoadBalancerClient loadBalancer;
 
+    @PreAuthorize("hasAuthority('SNIFFER')")
     @RequestMapping(value = "/getbroker", method = RequestMethod.GET)
     public String getBrokerInfo() {
 
