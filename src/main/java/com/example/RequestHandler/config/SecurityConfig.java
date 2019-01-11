@@ -1,5 +1,6 @@
 package com.example.RequestHandler.config;
 
+import com.example.RequestHandler.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -39,10 +40,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String securityRealm;
 
     @Autowired
-    private PasswordEncoder bCryptPasswordEncoder;
+    private PasswordEncoder bCryptPasswordEncoder ;
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Bean
+    protected UserDetailsService userDetailsService() {
+        return new UserDetailsServiceImpl();
+    }
 
     @Bean
     @Override

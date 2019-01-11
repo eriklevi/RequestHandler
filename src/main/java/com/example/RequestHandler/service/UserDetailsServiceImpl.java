@@ -23,6 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Client client = clientRepository.findByUsername(username);
+        System.out.println("nome "+client.getUsername()+ "password "+client.getPassword()+" id "+ client.getId());
         if(client == null){
             throw new UsernameNotFoundException(String.format("The username %s doesn't exist", username));
         }

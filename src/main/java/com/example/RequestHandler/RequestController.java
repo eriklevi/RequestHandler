@@ -17,7 +17,7 @@ class ServiceInstanceRestController {
 
     @Autowired private LoadBalancerClient loadBalancer;
 
-    @PreAuthorize("hasAuthority('SNIFFER')")
+    @PreAuthorize("hasAuthority('PROBE')")
     @RequestMapping(value = "/getbroker", method = RequestMethod.GET)
     public String getBrokerInfo() {
 
