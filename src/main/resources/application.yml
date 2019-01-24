@@ -5,33 +5,23 @@ eureka:
     registerWithEureka: false
     fetchRegistry: true
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka
 server:
   port: 8762
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/
-    username: postgres
-    password: 12345
-  jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: test
 security:
+  signing-key: MaYzkSjmkzPC57L
+  encoding-strength: 256
+  security-realm: Realm
   jwt:
     client-id: client
-    client-secret: $2y$12$2qhsKoao0SyuYKvV1SHYHuo.a6XffQxLfVIOEuFxnqmDavPXwCXkW
+    client-secret: $2a$10$Im70pzd60.dGgK9V8zZX3uG8UF9RGphml10MlGhtzs9H.TsB2Zti2
     grant-type: password
     scope-read: read
     scope-write: write
     resource-ids: RestAPI
-  oauth2:
-    resource:
-      filter-order: 3
-  signing-key: MaYzkSjmkzPC57L
-  encoding-strength: 256
-  security-realm: Realm

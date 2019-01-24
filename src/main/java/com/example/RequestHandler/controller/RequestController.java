@@ -1,4 +1,4 @@
-package com.example.RequestHandler;
+package com.example.RequestHandler.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -13,22 +13,18 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 @RestController
-class ServiceInstanceRestController {
+class RequestController {
 
-    @Autowired private LoadBalancerClient loadBalancer;
+    @Autowired
+    private LoadBalancerClient loadBalancer;
 
     @PreAuthorize("hasAuthority('PROBE')")
     @RequestMapping(value = "/getbroker", method = RequestMethod.GET)
     public String getBrokerInfo() {
-
         ServiceInstance serviceInstance=loadBalancer.choose("MOQUETTE");
-
         System.out.println(serviceInstance.getUri());
-
         String baseUrl = serviceInstance.getUri().toString();
-
         baseUrl = baseUrl+"/config";
-
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response=null;
         try{

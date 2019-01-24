@@ -1,8 +1,7 @@
 package com.example.RequestHandler.service;
 
-import com.example.RequestHandler.entity.Client;
-import com.example.RequestHandler.entity.Role;
-import com.example.RequestHandler.repository.ClientRepository;
+import com.example.RequestHandler.entity.User;
+import com.example.RequestHandler.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,21 +17,21 @@ import java.util.List;
 public class UserDetailsServiceImpl implements UserDetailsService{
 
     @Autowired
-    private ClientRepository clientRepository;
+    private UsersRepository usersRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Client client = clientRepository.findByUsername(username);
-        System.out.println("nome "+client.getUsername()+ "password "+client.getPassword()+" id "+ client.getId());
-        if(client == null){
+        User user = usersRepository.findByUsername(username);
+        System.out.println("nome "+ user.getUsername()+ "password "+ user.getPassword()+" id "+ user.getId());
+        if(user == null){
             throw new UsernameNotFoundException(String.format("The username %s doesn't exist", username));
         }
         List<GrantedAuthority> authorities = new ArrayList<>();
-        List<Role> roles = client.getRoles();
-        for(Role role : roles){
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
+        List<String> roles = user.getRoles();
+        for(String role : roles){
+            authorities.add(new SimpleGrantedAuthority(role));
         }
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(client.getUsername(), client.getPassword(), authorities);
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(), authorities);
         return userDetails;
     }
 }

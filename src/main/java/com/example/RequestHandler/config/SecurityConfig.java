@@ -24,7 +24,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
-import com.google.common.collect.Lists;
+import java.util.Arrays;
+
 
 @Configuration
 @EnableWebSecurity
@@ -40,10 +41,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private String securityRealm;
 
     @Autowired
-    private PasswordEncoder bCryptPasswordEncoder ;
+    private PasswordEncoder passwordEncoder ;
 
     @Autowired
     private UserDetailsService userDetailsService;
+
 
     @Bean
     protected UserDetailsService userDetailsService() {
@@ -58,7 +60,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-        auth.userDetailsService(userDetailsService).passwordEncoder(bCryptPasswordEncoder);
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override
@@ -89,7 +93,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public TokenEnhancerChain tokenEnhancerChain(){
         final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
-        tokenEnhancerChain.setTokenEnhancers(Lists.newArrayList(new MyTokenEnhancer(), accessTokenConverter()));
+        tokenEnhancerChain.setTokenEnhancers(Arrays.asList(new MyTokenEnhancer(), accessTokenConverter()));
         return tokenEnhancerChain;
     }
 
