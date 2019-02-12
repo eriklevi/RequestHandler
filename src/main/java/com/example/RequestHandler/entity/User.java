@@ -1,20 +1,36 @@
 package com.example.RequestHandler.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "users")
 public class User {
 
-    @Id private String id;
-    @NotNull @Email private String mail;
-    @NotNull private String username;
-    @NotNull private String password;
-    @NotNull private ArrayList<String> roles;
+    @Id
+    private String id;
+    @NotEmpty(message = "Email should not be empty")
+    @Email
+    @JsonProperty("mail")
+    private String mail;
+    @NotEmpty(message = "Username should not be empty")
+    @JsonProperty("username")
+    private String username;
+    @NotEmpty(message = "Password should not be empty")
+    @Size(min = 8)
+    @JsonIgnore
+    private String password;
+    @NotEmpty(message = "Roles should not be empty")
+    @Size(min = 1, max = 3)
+    @JsonProperty("roles")
+    private List<String> roles;
 
     public User(){}
 
@@ -38,10 +54,12 @@ public class User {
         this.username = username;
     }
 
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
+    @JsonProperty("password")
     public void setPassword(String password) {
         this.password = password;
     }
@@ -50,7 +68,12 @@ public class User {
         return roles;
     }
 
-    public void setRoles(ArrayList<String> roles){
+    public void setRoles(List<String> roles){
         this.roles = roles;
+    }
+
+    public void setRole(String role) {
+        if(role.equals("ADMIN") || role.equals("USER") || role.equals("PROBE"))
+            this.roles.add(role);
     }
 }

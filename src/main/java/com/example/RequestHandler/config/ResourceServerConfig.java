@@ -1,5 +1,6 @@
 package com.example.RequestHandler.config;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -31,12 +32,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 .tokenStore(tokenStore);
     }
 
+    //da rivedere magari mettere eccezione per il percorso user
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
-                .requestMatchers()
-                .and()
                 .authorizeRequests()
-                .antMatchers("/**").authenticated();
+                .anyRequest().permitAll();
     }
 }

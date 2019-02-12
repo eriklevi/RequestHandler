@@ -4,20 +4,28 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @Document(collection = "sniffers")
 public class Sniffer {
 
-    @Id private String id;
-    @NotNull
+    @Id
+    private String id;
+    @NotEmpty(message = "MAC should not be empty")
     @Pattern(regexp = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$")
     private String mac;
-    @NotNull private String name;
-    @NotNull private String building;
-    @NotNull private String room;
-    @NotNull private GeoJsonPoint location;
+    @NotEmpty(message = "Name should not be empty")
+    private String name;
+    @NotEmpty(message = "Building should not be empty")
+    private String building;
+    @NotEmpty(message = "Room should not be empty")
+    private String room;
+    private GeoJsonPoint location;
+    private String status;
+    @NotNull
+    private Configuration configuration;
 
     public Sniffer(){}
 
@@ -67,5 +75,21 @@ public class Sniffer {
 
     public void setLocation(GeoJsonPoint location) {
         this.location = location;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 }

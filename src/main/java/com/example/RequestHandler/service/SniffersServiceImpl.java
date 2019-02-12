@@ -1,7 +1,9 @@
 package com.example.RequestHandler.service;
 
+import com.example.RequestHandler.entity.Configuration;
 import com.example.RequestHandler.entity.Sniffer;
 import com.example.RequestHandler.repository.SniffersRepository;
+import com.example.RequestHandler.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +35,8 @@ public class SniffersServiceImpl implements SniffersService {
 
     @Override
     public void deleteSnifferByName(String name, HttpServletResponse response) {
-        Sniffer sniffer = sniffersRepository.findByName(name);
-        if(sniffer !=  null){
-            sniffersRepository.delete(sniffer);
+        if(sniffersRepository.existsByName(name)){
+            sniffersRepository.deleteByName(name);
             System.out.println("Cancellato sniffer: "+name);
             response.setStatus(200);
         }
@@ -45,14 +46,10 @@ public class SniffersServiceImpl implements SniffersService {
     }
 
     @Override
-    public void updateSnifferByName(Sniffer sniffer, HttpServletResponse response) {
-        Sniffer sniffer1 = sniffersRepository.findByName(sniffer.getName());
-        if(sniffer1 != null){
-            sniffer1.setName(sniffer.getName());
-            sniffer1.setRoom(sniffer.getRoom());
-            sniffer1.setBuilding(sniffer.getBuilding());
-            sniffer1.setLocation(sniffer.getLocation());
-            sniffersRepository.save(sniffer1);
+    public void updateSnifferByName(String name, Sniffer sniffer, HttpServletResponse response) {
+        Sniffer sniffer1 = sniffersRepository.findByName(name);
+        if(sniffer1 != null && name.equals(sniffer.getName())){
+            sniffersRepository.save(sniffer);
             response.setStatus(200);
         }
         else{
@@ -97,5 +94,18 @@ public class SniffersServiceImpl implements SniffersService {
     public List<Sniffer> getSniffers(HttpServletResponse response) {
         response.setStatus(200);
         return sniffersRepository.findAll();
+    }
+
+    @Override
+    public Configuration getSnifferConfigurationByName(String name, HttpServletResponse response) {
+        Sniffer sniffer = sniffersRepository.findByName(name);
+        if(sniffer != null){
+            response.setStatus(200);
+            return sniffer.getConfiguration();
+        }
+        else{
+            response.setStatus(400);
+            return null;
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.RequestHandler.controller;
 
+import com.example.RequestHandler.entity.Configuration;
 import com.example.RequestHandler.entity.Sniffer;
 import com.example.RequestHandler.service.SniffersService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 @RestController
@@ -23,6 +24,8 @@ public class SniffersController {
     @Autowired
     private SniffersService sniffersService;
 
+
+    //TODO tutto da sostituire con ma invece di name, ricorda che il nome è univoco per stanza ma può essere duplicato
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public void createSniffer(@RequestBody @Valid Sniffer sniffer, HttpServletResponse response){
@@ -32,7 +35,7 @@ public class SniffersController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/{name}", method = RequestMethod.GET)
     public @ResponseBody Sniffer
-    getSnifferByName(@PathVariable @NotNull String name, HttpServletResponse response){
+    getSnifferByName(@PathVariable @NotEmpty String name, HttpServletResponse response){
         return sniffersService.getSnifferByName(name, response);
     }
 
@@ -45,14 +48,21 @@ public class SniffersController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
-    public void removeSnifferByName(@PathVariable @NotNull String name, HttpServletResponse response){
-        sniffersService.deleteSnifferByName(name, response);
+    public void removeSnifferByName(@PathVariable @NotEmpty String id, HttpServletResponse response){
+        sniffersService.deleteSnifferByName(id, response);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "{/name}", method = RequestMethod.PUT)
-    public void updateSnifferByName(@PathVariable @Valid Sniffer sniffer, HttpServletResponse response){
-        sniffersService.updateSnifferByName(sniffer, response);
+    @RequestMapping(value = "/{name}", method = RequestMethod.PUT)
+    public void updateSnifferByName(@RequestBody @Valid Sniffer sniffer, @PathVariable @NotEmpty String name, HttpServletResponse response){
+        sniffersService.updateSnifferByName(name, sniffer, response);
+    }
+
+    @PreAuthorize("hasAuthority('SNIFFER')")
+    @RequestMapping(value = "/{name}/config")
+    public @ResponseBody Configuration
+    getSnifferConfiguration(@PathVariable String name, HttpServletResponse response){
+        return sniffersService.getSnifferConfigurationByName(name, response);
     }
 
 

@@ -12,5 +12,5 @@ public interface SniffersRepository extends MongoRepository<Sniffer,String> {
     Sniffer findByName(String name);
     List<Sniffer> findByBuilding(String building);
     List<Sniffer> findByRoom(String room);
-
+    void deleteByName(String name);
 }
