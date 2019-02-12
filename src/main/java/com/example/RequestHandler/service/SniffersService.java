@@ -9,11 +9,12 @@ import java.util.List;
 
 public interface SniffersService {
     void addSniffer(Sniffer sniffer, HttpServletResponse response);
-    void deleteSnifferByName(String name, HttpServletResponse response);
-    void updateSnifferByName(String name,Sniffer sniffer, HttpServletResponse response);
-    Sniffer getSnifferByName(String name, HttpServletResponse response);
+    void deleteSnifferById(String id, HttpServletResponse response);
+    void updateSnifferById(String id,Sniffer sniffer, HttpServletResponse response);
+    Sniffer getSnifferById(String id, HttpServletResponse response);
     List<Sniffer> getSniffersByRoom(String room, HttpServletResponse response);
+    List<Sniffer> getSniffersByRoom(String room);
     List<Sniffer> getSniffersByBuilding(String building, HttpServletResponse response);
     List<Sniffer> getSniffers(HttpServletResponse response);
-    Configuration getSnifferConfigurationByName(String name, HttpServletResponse response);
+    Configuration getSnifferConfigurationById(String id, HttpServletResponse response);
 }

@@ -25,7 +25,6 @@ public class SniffersController {
     private SniffersService sniffersService;
 
 
-    //TODO tutto da sostituire con ma invece di name, ricorda che il nome è univoco per stanza ma può essere duplicato
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "", method = RequestMethod.POST)
     public void createSniffer(@RequestBody @Valid Sniffer sniffer, HttpServletResponse response){
@@ -33,10 +32,10 @@ public class SniffersController {
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-    @RequestMapping(value = "/{name}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public @ResponseBody Sniffer
-    getSnifferByName(@PathVariable @NotEmpty String name, HttpServletResponse response){
-        return sniffersService.getSnifferByName(name, response);
+    getSnifferByName(@PathVariable @NotEmpty String id, HttpServletResponse response){
+        return sniffersService.getSnifferById(id, response);
     }
 
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
@@ -49,20 +48,20 @@ public class SniffersController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
     public void removeSnifferByName(@PathVariable @NotEmpty String id, HttpServletResponse response){
-        sniffersService.deleteSnifferByName(id, response);
+        sniffersService.deleteSnifferById(id, response);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @RequestMapping(value = "/{name}", method = RequestMethod.PUT)
     public void updateSnifferByName(@RequestBody @Valid Sniffer sniffer, @PathVariable @NotEmpty String name, HttpServletResponse response){
-        sniffersService.updateSnifferByName(name, sniffer, response);
+        sniffersService.updateSnifferById(name, sniffer, response);
     }
 
     @PreAuthorize("hasAuthority('SNIFFER')")
     @RequestMapping(value = "/{name}/config")
     public @ResponseBody Configuration
     getSnifferConfiguration(@PathVariable String name, HttpServletResponse response){
-        return sniffersService.getSnifferConfigurationByName(name, response);
+        return sniffersService.getSnifferConfigurationById(name, response);
     }
 
 

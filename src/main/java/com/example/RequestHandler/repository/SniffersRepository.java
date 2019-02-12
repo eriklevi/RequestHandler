@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface SniffersRepository extends MongoRepository<Sniffer,String> {
-    Boolean existsByName(String name);
-    Sniffer findByName(String name);
+    Boolean existsByMac(String mac);
+    Sniffer findByMacID(String macID);
     List<Sniffer> findByBuilding(String building);
     List<Sniffer> findByRoom(String room);
-    void deleteByName(String name);
+    void deleteByMacID(String macID);
 }

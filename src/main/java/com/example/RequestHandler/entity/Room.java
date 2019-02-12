@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 @Document(collection = "rooms")
