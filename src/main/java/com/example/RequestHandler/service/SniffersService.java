@@ -16,5 +16,5 @@ public interface SniffersService {
     List<Sniffer> getSniffersByRoom(String room);
     List<Sniffer> getSniffersByBuilding(String building, HttpServletResponse response);
     List<Sniffer> getSniffers(HttpServletResponse response);
-    Configuration getSnifferConfigurationById(String id, HttpServletResponse response);
+    Configuration getSnifferConfigurationByMacId(String macid, HttpServletResponse response);
 }

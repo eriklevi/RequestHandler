@@ -3,23 +3,37 @@ package com.example.RequestHandler.service;
 import com.example.RequestHandler.entity.Configuration;
 import com.example.RequestHandler.entity.Room;
 import com.example.RequestHandler.entity.Sniffer;
+import com.example.RequestHandler.entity.User;
 import com.example.RequestHandler.repository.RoomsRepository;
 import com.example.RequestHandler.repository.SniffersRepository;
 import com.example.RequestHandler.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.security.MessageDigest;
 
 @Service
 public class SniffersServiceImpl implements SniffersService {
 
+    private final SniffersRepository sniffersRepository;
+    private final RoomsRepository roomsRepository;
+    private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private SniffersRepository sniffersRepository;
-    @Autowired
-    private RoomsRepository roomsRepository;
+    public SniffersServiceImpl(SniffersRepository sniffersRepository, RoomsRepository roomsRepository, UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+        this.sniffersRepository = sniffersRepository;
+        this.roomsRepository = roomsRepository;
+        this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void addSniffer(Sniffer sniffer, HttpServletResponse response) {
@@ -32,7 +46,13 @@ public class SniffersServiceImpl implements SniffersService {
             if (list == null) {
                 //we dont have any sniffer in the given room so we proceed to add it
                 Optional<Room> optionalRoom = roomsRepository.findById(sniffer.getRoom());
-                addProcedure(sniffer, response, optionalRoom);
+                try {
+                    addProcedure(sniffer, response, optionalRoom);
+                }
+                catch(Exception e){
+                    System.out.println(e.getMessage());
+                    response.setStatus(400);
+                }
             } else {
                 if (list.stream()
                         .map(Sniffer::getName)
@@ -41,7 +61,13 @@ public class SniffersServiceImpl implements SniffersService {
                     response.setStatus(400);
                 } else {
                     Optional<Room> optionalRoom = roomsRepository.findById(sniffer.getRoom());
-                    addProcedure(sniffer, response, optionalRoom);
+                    try {
+                        addProcedure(sniffer, response, optionalRoom);
+                    }
+                    catch(Exception e){
+                        System.out.println(e.getMessage());
+                        response.setStatus(400);
+                    }
                 }
             }
         }
@@ -50,7 +76,7 @@ public class SniffersServiceImpl implements SniffersService {
         }
     }
 
-    public void addProcedure(Sniffer sniffer, HttpServletResponse response, Optional<Room> optionalRoom) {
+    private void addProcedure(Sniffer sniffer, HttpServletResponse response, Optional<Room> optionalRoom) throws NoSuchAlgorithmException {
         if (optionalRoom.isPresent()) {
             Room room = optionalRoom.get();
             Sniffer newSniffer = new Sniffer();
@@ -58,10 +84,28 @@ public class SniffersServiceImpl implements SniffersService {
             newSniffer.setName(sniffer.getName());
             newSniffer.setBuilding(sniffer.getBuilding());
             newSniffer.setRoom(sniffer.getRoom());
+            newSniffer.setMacID(sniffer.getMac().replace(":", ""));
             newSniffer.setLocation(sniffer.getLocation());
+            newSniffer.setConfiguration(sniffer.getConfiguration());
             Sniffer sniffer1 = sniffersRepository.insert(newSniffer);
             room.addsniffer(sniffer1.getId());//we use sniffer1 to be shure to get the sniffer id
             roomsRepository.save(room);
+            User u = new User();
+            u.setUsername(sniffer.getMac().replace(":", ""));
+            String password = sniffer1.getMac().replace(":", "") + "secret12345";
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] hashInBytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashInBytes){
+                sb.append(String.format("%02x", b));
+            }
+            password = sb.toString().substring(0, 12);
+            System.out.println("Password for " + u.getUsername() + ": " + password);
+            u.setPassword(passwordEncoder.encode(password));
+            List<String> roles = new ArrayList<>();
+            roles.add("SNIFFER");
+            u.setRoles(roles);
+            usersRepository.save(u);
             response.setStatus(200);
         }
         else{
@@ -70,6 +114,7 @@ public class SniffersServiceImpl implements SniffersService {
     }
 
     @Override
+    //TODO cancellare a cascata anche l'utente correlato
     public void deleteSnifferById(String id, HttpServletResponse response) {
         if(sniffersRepository.existsById(id)){
             sniffersRepository.deleteById(id);
@@ -82,11 +127,12 @@ public class SniffersServiceImpl implements SniffersService {
     }
 
     @Override
+    //TODO controllare quali sono i campi che possono essere effettvamente modificati tipo mac address no o id
     public void updateSnifferById(String id, Sniffer sniffer, HttpServletResponse response) {
         Optional<Sniffer> optionalSniffer = sniffersRepository.findById(id);
         if(optionalSniffer.isPresent()
                 && sniffer.getId().equals(id) //we have to check correspondence
-                && !sniffersRepository.existsByMac(sniffer.getMac()) //mac should be unique
+
         ){
             sniffersRepository.save(sniffer);
             response.setStatus(200);
@@ -136,8 +182,8 @@ public class SniffersServiceImpl implements SniffersService {
     }
 
     @Override
-    public Configuration getSnifferConfigurationById(String id, HttpServletResponse response) {
-        Optional<Sniffer> optionalSniffer = sniffersRepository.findById(id);
+    public Configuration getSnifferConfigurationByMacId(String id, HttpServletResponse response) {
+        Optional<Sniffer> optionalSniffer = sniffersRepository.findByMacID(id);
         if(optionalSniffer.isPresent()){
             response.setStatus(200);
             return optionalSniffer.get().getConfiguration();

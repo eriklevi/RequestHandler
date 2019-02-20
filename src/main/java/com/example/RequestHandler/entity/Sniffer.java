@@ -16,6 +16,7 @@ public class Sniffer {
     @NotEmpty(message = "MAC should not be empty")
     @Pattern(regexp = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$")
     private String mac;
+    private String macID;
     @NotEmpty(message = "Name should not be empty")
     private String name;
     @NotEmpty(message = "Building should not be empty")
@@ -93,4 +94,11 @@ public class Sniffer {
         this.configuration = configuration;
     }
 
+    public String getMacID() {
+        return macID;
+    }
+
+    public void setMacID(String macID) {
+        this.macID = macID;
+    }
 }

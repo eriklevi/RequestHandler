@@ -13,15 +13,19 @@ import java.util.Optional;
 @Service
 public class UsersServiceImpl implements UsersService {
 
+    private final UsersRepository usersRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    private UsersRepository usersRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    public UsersServiceImpl(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+        this.usersRepository = usersRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public void addUser(User user, HttpServletResponse response) {
         //Check if the user already exists
-        if(!usersRepository.existsByMail(user.getMail())){
+        if(!usersRepository.existsByUsername(user.getUsername())){
             User newUser = new User();
             newUser.setMail(user.getMail());
             newUser.setUsername(user.getUsername());
@@ -38,8 +42,7 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public List<User> getUsers(HttpServletResponse response) {
         response.setStatus(200);
-        List<User> users = usersRepository.findAll();
-        return users;
+        return usersRepository.findAll();
     }
 
     @Override

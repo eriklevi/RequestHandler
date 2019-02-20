@@ -21,8 +21,12 @@ import java.util.List;
 @RequestMapping("/sniffers")
 public class SniffersController {
 
+    private final SniffersService sniffersService;
+
     @Autowired
-    private SniffersService sniffersService;
+    public SniffersController(SniffersService sniffersService) {
+        this.sniffersService = sniffersService;
+    }
 
 
     @PreAuthorize("hasAuthority('ADMIN')")
@@ -34,7 +38,7 @@ public class SniffersController {
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public @ResponseBody Sniffer
-    getSnifferByName(@PathVariable @NotEmpty String id, HttpServletResponse response){
+    getSnifferById(@PathVariable @NotEmpty String id, HttpServletResponse response){
         return sniffersService.getSnifferById(id, response);
     }
 
@@ -46,22 +50,22 @@ public class SniffersController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/{name}", method = RequestMethod.DELETE)
-    public void removeSnifferByName(@PathVariable @NotEmpty String id, HttpServletResponse response){
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+    public void removeSnifferById(@PathVariable @NotEmpty String id, HttpServletResponse response){
         sniffersService.deleteSnifferById(id, response);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @RequestMapping(value = "/{name}", method = RequestMethod.PUT)
-    public void updateSnifferByName(@RequestBody @Valid Sniffer sniffer, @PathVariable @NotEmpty String name, HttpServletResponse response){
-        sniffersService.updateSnifferById(name, sniffer, response);
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    public void updateSnifferById(@RequestBody @Valid Sniffer sniffer, @PathVariable @NotEmpty String id, HttpServletResponse response){
+        sniffersService.updateSnifferById(id, sniffer, response);
     }
 
     @PreAuthorize("hasAuthority('SNIFFER')")
-    @RequestMapping(value = "/{name}/config")
+    @RequestMapping(value = "/{id}/configuration")
     public @ResponseBody Configuration
-    getSnifferConfiguration(@PathVariable String name, HttpServletResponse response){
-        return sniffersService.getSnifferConfigurationById(name, response);
+    getSnifferConfiguration(@PathVariable String id, HttpServletResponse response){
+        return sniffersService.getSnifferConfigurationByMacId(id, response);
     }
 
 
