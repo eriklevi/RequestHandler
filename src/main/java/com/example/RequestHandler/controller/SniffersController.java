@@ -3,7 +3,10 @@ package com.example.RequestHandler.controller;
 import com.example.RequestHandler.entity.Configuration;
 import com.example.RequestHandler.entity.Sniffer;
 import com.example.RequestHandler.service.SniffersService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,6 +25,8 @@ import java.util.List;
 public class SniffersController {
 
     private final SniffersService sniffersService;
+
+    private static final Logger logger = LoggerFactory.getLogger(SniffersController.class);
 
     @Autowired
     public SniffersController(SniffersService sniffersService) {

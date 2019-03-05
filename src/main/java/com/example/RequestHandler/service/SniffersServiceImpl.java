@@ -185,7 +185,6 @@ public class SniffersServiceImpl implements SniffersService {
     public Configuration getSnifferConfigurationByMacId(String id, HttpServletResponse response) {
         Optional<Sniffer> optionalSniffer = sniffersRepository.findByMacID(id);
         if(optionalSniffer.isPresent()){
-
             response.setStatus(200);
             return optionalSniffer.get().getConfiguration();
         }

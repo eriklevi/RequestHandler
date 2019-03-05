@@ -7,7 +7,9 @@ public class Configuration {
     private boolean dumpMode;
     @NotEmpty
     private boolean privacyMode;
+    @NotEmpty
     private String brokerAddress;
+    @NotEmpty
     private int brokerPort;
 
     public boolean isDumpMode() {
