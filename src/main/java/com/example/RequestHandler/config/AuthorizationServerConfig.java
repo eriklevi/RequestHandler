@@ -60,7 +60,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.tokenServices(defaultTokenServices).authenticationManager(authenticationManager)
-                .accessTokenConverter(accessTokenConverter).userDetailsService(userDetailsService);
+        endpoints
+                .tokenServices(defaultTokenServices)
+                .authenticationManager(authenticationManager)
+                .accessTokenConverter(accessTokenConverter)
+                .userDetailsService(userDetailsService);
     }
 }

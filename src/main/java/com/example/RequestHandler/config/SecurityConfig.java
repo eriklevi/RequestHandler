@@ -40,8 +40,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Value("${security.security-realm}")
     private String securityRealm;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder ;
 
     @Autowired
     private UserDetailsService userDetailsService;
@@ -62,7 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
         auth
                 .userDetailsService(userDetailsService)
-                .passwordEncoder(passwordEncoder);
+                .passwordEncoder(passwordEncoder());
     }
 
     @Override
